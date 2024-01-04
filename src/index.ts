@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
-
+import UserModel from "./models/user.model";
 //invoke express
 const app = express();
 
@@ -31,31 +31,42 @@ db.on('error', (error) => {
     console.log("DB connection Error", error);
 
 })
-db.on('open', ()=>{
+db.on('open', () => {
     console.log("DB connection Successfully");
 })
 
 //get all users
-app.get('/user/all', (req: express.Request, res: express.Response) => {
+app.get('/user/all', async (req: express.Request, res: express.Response) => {
 
-    let data = {
-        id: "01234",
-        username: "thami",
-        fName: "thamindu",
-        lName: "ranawaka",
-        email: "thamindu@gmail.com"
+    try {
+        let users = await UserModel.find();
+        res.status(200).send(users);
+    } catch (error) {
+        res.status(100).send("Error");
+    }
+
+});
+
+//save user
+app.post('/user', async (req: express.Request, res: express.Response) => {
+
+    try {
+        const request_body: any = req.body;
+
+        const userModel = new UserModel({
+            username: request_body.username,
+            fname: request_body.fname,
+            lname: request_body.lname,
+            email: request_body.email,
+            password: request_body.password
+        });
+
+        await userModel.save();
+        res.status(200).send("User created Success...!");
+
+    } catch (error) {
+        res.status(100).send("Error");
 
     }
 
-    res.send(users);
-})
-
-//save user
-app.post('/user', (req: express.Request, res: express.Response) => {
-    const request_body: any = req.body;
-    // console.log(request_body);
-
-    users.push(request_body);
-
-    res.send("Ok");
 });
