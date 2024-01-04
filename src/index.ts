@@ -2,6 +2,9 @@ import express from 'express';
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import UserModel from "./models/user.model";
+import CustomResponse from "./dtos/custom.response";
+
+
 //invoke express
 const app = express();
 
@@ -40,12 +43,56 @@ app.get('/user/all', async (req: express.Request, res: express.Response) => {
 
     try {
         let users = await UserModel.find();
-        res.status(200).send(users);
+        res.status(200).send(
+            new CustomResponse(200, "Get All Users", users)
+        );
     } catch (error) {
-        res.status(100).send("Error");
+        res.status(100).send(
+            new CustomResponse(100, "User load Failed")
+        );
     }
 
 });
+
+
+//auth email and password
+
+app.post('/user/auth', async (req: express.Request, res: express.Response) => {
+
+    try {
+        const request_body: any = req.body;
+
+        let user = await UserModel.findOne({email: request_body.email});
+        if (user) {
+            if (user.password === request_body.password) {
+                res.status(200).send(
+                    new CustomResponse(200, "Access User", user)
+                );
+            } else {
+
+                res.status(401).send(
+                    new CustomResponse(401, "Invalid credential")
+                );
+
+            }
+
+
+        } else {
+            res.status(404).send(
+                new CustomResponse(404, "User not found")
+            );
+        }
+
+
+    } catch (error) {
+        res.status(100).send(
+            new CustomResponse(100, "User created Failed")
+        );
+
+    }
+
+});
+
 
 //save user
 app.post('/user', async (req: express.Request, res: express.Response) => {
@@ -62,10 +109,14 @@ app.post('/user', async (req: express.Request, res: express.Response) => {
         });
 
         await userModel.save();
-        res.status(200).send("User created Success...!");
+        res.status(200).send(
+            new CustomResponse(200, "User created Success")
+        );
 
     } catch (error) {
-        res.status(100).send("Error");
+        res.status(100).send(
+            new CustomResponse(100, "User created Failed")
+        );
 
     }
 
