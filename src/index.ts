@@ -38,6 +38,8 @@ db.on('open', () => {
     console.log("DB connection Successfully");
 })
 
+//------------------------------------------------------Users--------------------------------------------------------------
+
 //get all users
 app.get('/user/all', async (req: express.Request, res: express.Response) => {
 
@@ -121,3 +123,7 @@ app.post('/user', async (req: express.Request, res: express.Response) => {
     }
 
 });
+
+
+//------------------------------------------------------Article--------------------------------------------------------------
+
