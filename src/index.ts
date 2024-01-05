@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import UserModel from "./models/user.model";
 import CustomResponse from "./dtos/custom.response";
+import ArticleModel from "./models/article.model";
 
 
 //invoke express
@@ -127,3 +128,33 @@ app.post('/user', async (req: express.Request, res: express.Response) => {
 
 //------------------------------------------------------Article--------------------------------------------------------------
 
+app.post('/article', async (req: express.Request, res: express.Response) => {
+
+    try {
+        const request_body: any = req.body;
+
+       let articleModel = new ArticleModel({
+           title:request_body.title,
+           description:request_body.description,
+           user:request_body.user
+       })
+
+        await articleModel.save().then(r=>{
+            res.status(200).send(
+                new CustomResponse(200, "Article created Success")
+            );
+        }).catch(e =>{
+            res.status(100).send(
+                new CustomResponse(100, "Something went wrong")
+            );
+        });
+
+
+    } catch (error) {
+        res.status(100).send(
+            new CustomResponse(100, "Article created Failed")
+        );
+
+    }
+
+});
