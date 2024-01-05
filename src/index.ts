@@ -133,17 +133,17 @@ app.post('/article', async (req: express.Request, res: express.Response) => {
     try {
         const request_body: any = req.body;
 
-       let articleModel = new ArticleModel({
-           title:request_body.title,
-           description:request_body.description,
-           user:request_body.user
-       })
+        let articleModel = new ArticleModel({
+            title: request_body.title,
+            description: request_body.description,
+            user: request_body.user
+        })
 
-        await articleModel.save().then(r=>{
+        await articleModel.save().then(r => {
             res.status(200).send(
                 new CustomResponse(200, "Article created Success")
             );
-        }).catch(e =>{
+        }).catch(e => {
             res.status(100).send(
                 new CustomResponse(100, "Something went wrong")
             );
@@ -156,5 +156,28 @@ app.post('/article', async (req: express.Request, res: express.Response) => {
         );
 
     }
+
+});
+
+app.get('/article/all', async (req: express.Request, res: express.Response) => {
+
+    // console.log("Get All article");
+
+      try {
+
+          let req_query: any = req.query;
+          let size:number = req_query.size;
+          let page:number = req_query.page;
+
+
+          let article = await ArticleModel.find().limit(size).skip(size * (page-1));
+          res.status(200).send(
+              new CustomResponse(200, "Get All Articles", article)
+          );
+      } catch (error) {
+          res.status(100).send(
+              new CustomResponse(100, "Article load Failed")
+          );
+      }
 
 });
