@@ -19,16 +19,8 @@ app.listen(8080, () => {
   console.log("Server start 8080");
 });
 
-interface user {
-  username: string;
-  fname: string;
-  lname: string;
-  email: string;
-  password: string;
-}
 
-let users: user[] = [];
-
+//connect to db
 
 mongoose.connect(process.env.MONGO_URL as string);
 const db = mongoose.connection;
