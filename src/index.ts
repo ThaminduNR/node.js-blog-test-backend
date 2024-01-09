@@ -29,6 +29,7 @@ interface user {
 
 let users: user[] = [];
 
+
 mongoose.connect(process.env.MONGO_URL as string);
 const db = mongoose.connection;
 
